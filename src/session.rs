@@ -34,7 +34,7 @@ impl WebSession {
 
     pub fn advance(&mut self, state_data: JsValue) -> Result<WebAdvanceBlockedOn, JsValue> {
         let state_data_serde: Option<HashMap<String, String>> = serde_wasm_bindgen::from_value(state_data)?;
-        let state_data = state_data_serde.and_then(|data| Some(StateDataSerde::new(data).to_statedata(self.session.varstore()).ok()?));
+        let state_data = state_data_serde.and_then(|data| Some(StateDataSerde::new(data).to_statedata(self.session.var_store()).ok()?));
         self.advance_internal(state_data)
             .and_then(|advance_result| {
                 WebAdvanceBlockedOn::try_from(advance_result, &self.session.action_store())
@@ -44,10 +44,10 @@ impl WebSession {
 
     #[wasm_bindgen(method, getter)]
     pub fn statedata(&self) -> Result<JsValue, JsValue> /* HashMap<String, String> */ {
-        let varstore = self.session.varstore();
+        let var_store = self.session.var_store();
         let result = self.session.state_data().iter_val()
             .map(|(var_id, val)| {
-                let name = varstore.name_from_id(var_id).ok_or_else(|| {
+                let name = var_store.name_from_id(var_id).ok_or_else(|| {
                     let error = Error::VarId(IdError::IdMissing(var_id.clone()));
                     WebError::from(error)
                 })?;
@@ -58,7 +58,7 @@ impl WebSession {
     }
 
     pub fn vars(&self) -> Result<JsValue, JsValue> /*HashMap<String, u32>*/ {
-        let result = self.session.varstore()
+        let result = self.session.var_store()
             .iter_names()
             .map(|(name, var_id)| { (name.clone(), var_id.val()) })
             .collect::<HashMap<String, u32>>();
