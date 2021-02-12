@@ -60,7 +60,7 @@ impl WebSession {
     pub fn vars(&self) -> Result<JsValue, JsValue> /*HashMap<String, u32>*/ {
         let result = self.session.var_store()
             .iter_names()
-            .map(|(name, var_id)| { (name.clone(), var_id.val()) })
+            .map(|(name, var_id)| { (name.clone().into_owned(), var_id.val()) })
             .collect::<HashMap<String, u32>>();
         Ok(serde_wasm_bindgen::to_value(&result).map_err(|_e| WebError::from(Error::Other))?)
     }
