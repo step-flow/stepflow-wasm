@@ -13,7 +13,6 @@ use stepflow_wasm::create_session;
 fn test_create_session() {
     let json = r#"
     {
-        "rootStep": "root",
         "vars": {
           "first_name": "String",
           "last_name": "String",
@@ -21,7 +20,7 @@ fn test_create_session() {
           "email": "Email"
         },
         "steps": {
-          "root": {
+          "$root": {
               "substeps": ["name", "email"],
               "outputVars": ["first_name", "last_name", "email"]
           },
@@ -33,7 +32,7 @@ fn test_create_session() {
           }
         },
         "stepActions": {
-          "$global": {
+          "$all": {
               "type": "htmlForm",
               "prefixHtml": "<label for='{{name}}'>{{name}}</label>",
               "stringHtml": "<input name='{{name}}'>",
@@ -51,18 +50,17 @@ fn test_create_session() {
 fn test_create_session_fail() {
     let json = r#"
     {
-        "rootStep": "root",
         "vars": {
           "first_name": "Stering",
         },
         "steps": {
-          "root": {
+          "$root": {
               "outputVars": ["first_name"]
           },
         },
         "stepActions": {
-          "$global": {
-            "type": "url",
+          "$all": {
+            "type": "uri",
             "baseUrl": "/base-path"
           }
         }
