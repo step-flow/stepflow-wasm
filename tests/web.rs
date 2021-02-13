@@ -31,7 +31,7 @@ fn test_create_session() {
               "outputVars": ["email"]
           }
         },
-        "stepActions": {
+        "actions": {
           "$all": {
               "type": "htmlForm",
               "prefixHtml": "<label for='{{name}}'>{{name}}</label>",
