@@ -37,9 +37,9 @@ pub fn set_panic_hook() {
 pub fn create_session(json: &str) -> Result<WebSession, JsValue> {
     let _ = SESSIONS.set(RwLock::new(ObjectStore::with_capacity(1)));   // result doesn't matter in this case
     let session_id = SESSIONS.get()
-        .ok_or_else(|| WebError::from(SerdeError::Other))?
+        .ok_or_else(|| WebError::from(SerdeError::Error(stepflow::Error::Other)))?
         .write()
-        .map_err(|_e| WebError::from(SerdeError::Other))?
+        .map_err(|_e| WebError::from(SerdeError::Error(stepflow::Error::Other)))?
         .reserve_id();
     
     WebSession::new(json, session_id)

@@ -22,13 +22,13 @@ fn test_create_session() {
         "steps": {
           "$root": {
               "substeps": ["name", "email"],
-              "outputVars": ["first_name", "last_name", "email"]
+              "outputs": ["first_name", "last_name", "email"]
           },
           "name": {
-              "outputVars": ["first_name", "last_name", "remember"]
+              "outputs": ["first_name", "last_name", "remember"]
           },
           "email": {
-              "outputVars": ["email"]
+              "outputs": ["email"]
           }
         },
         "actions": {

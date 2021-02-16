@@ -2,7 +2,6 @@ use std::collections::HashMap;
 use stepflow::object::IdError;
 use stepflow::data::StateData;
 use stepflow::{Session, SessionId, AdvanceBlockedOn, Error};
-use stepflow_serde::prelude::*;
 use stepflow_serde::{SessionSerde, StateDataSerde};
 use wasm_bindgen::prelude::*;
 use crate::{WebError, WebAdvanceBlockedOn};
@@ -15,9 +14,10 @@ pub struct WebSession {
 
 impl WebSession {
     pub fn new(json: &str, session_id: SessionId) -> Result<WebSession, JsValue> {
-        let mut session_serde: SessionSerde = serde_json::from_str(json).map_err(|e| e.to_string())?;
-        session_serde.session_id = session_id;
-        let session = Session::try_from(session_serde).map_err(|e| WebError::from(e))?;
+        let session_serde: SessionSerde = serde_json::from_str(json).map_err(|e| e.to_string())?;
+        let session = session_serde
+            .into_session(session_id, true)
+            .map_err(|e| WebError::from(e))?;
         Ok(WebSession { session })
     }
 }

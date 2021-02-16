@@ -3,9 +3,10 @@ use stepflow::Error;
 use stepflow_serde::SerdeError;
 use wasm_bindgen::prelude::*;
 
+
 #[wasm_bindgen]
 pub struct WebError {
-    error: SerdeError,
+    error: SerdeError<serde_json::Error>,
 }
 
 #[wasm_bindgen]
@@ -22,8 +23,8 @@ impl Display for WebError {
     }
 }
 
-impl From<SerdeError> for WebError {
-    fn from(error: SerdeError) -> Self {
+impl From<SerdeError<serde_json::Error>> for WebError {
+    fn from(error: SerdeError<serde_json::Error>) -> Self {
         WebError { error }
     }
 }
