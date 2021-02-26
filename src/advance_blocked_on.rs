@@ -49,8 +49,10 @@ impl From<&Box<dyn Action + Sync + Send>> for ActionType {
 
 #[wasm_bindgen]
 pub struct WebAdvanceBlockedOn {
+    #[wasm_bindgen(js_name = blockedOn)]
     pub blocked_on: WebAdvanceBlockedOnType,
     action_name: Option<String>,
+    #[wasm_bindgen(js_name = actionType)]
     pub action_type: Option<ActionType>,
     start_with: Option<Box<dyn Value>>,
 }
