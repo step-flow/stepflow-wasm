@@ -1,6 +1,8 @@
 use stepflow::prelude::*;
+use stepflow::object::{ObjectStore, IdError};
+use stepflow::action::{ActionId, HtmlFormAction, SetDataAction};
 use stepflow::data::BaseValue;
-use stepflow::{ActionObjectStore, AdvanceBlockedOn, Error};
+use stepflow::{AdvanceBlockedOn, Error};
 use wasm_bindgen::prelude::*;
 
 
@@ -22,14 +24,41 @@ pub enum WebAdvanceBlockedOnType {
 }
 
 #[wasm_bindgen]
+#[derive(Copy, Clone)]
+pub enum ActionType {
+//    StringTemplate,   TODO: support this
+    SetData,
+    HtmlForm,
+    Other,
+}
+
+impl From<&Box<dyn Action + Sync + Send>> for ActionType {
+    fn from(action: &Box<dyn Action + Sync + Send>) -> Self {
+//        if action.is::<StringTemplateAction>() {
+//            ActionType::StringTemplate
+//        } else
+        if action.is::<SetDataAction>() {
+            ActionType::SetData
+        } else if action.is::<HtmlFormAction>() {
+            ActionType::HtmlForm
+        } else {
+            ActionType::Other
+        }
+    }
+}
+
+#[wasm_bindgen]
 pub struct WebAdvanceBlockedOn {
     pub blocked_on: WebAdvanceBlockedOnType,
     action_name: Option<String>,
+    pub action_type: Option<ActionType>,
     start_with: Option<Box<dyn Value>>,
 }
 
 #[wasm_bindgen]
 impl WebAdvanceBlockedOn {
+    // implement getter to use different name
+    #[wasm_bindgen(method, getter)]
     pub fn action(&self) -> JsValue {
         match &self.action_name {
             None => JsValue::NULL,
@@ -37,6 +66,7 @@ impl WebAdvanceBlockedOn {
         }
     }
 
+    #[wasm_bindgen(method, getter)]
     pub fn start_with(&self) -> JsValue {
         match &self.start_with {
             None => JsValue::NULL,
@@ -46,13 +76,16 @@ impl WebAdvanceBlockedOn {
 }
 
 impl WebAdvanceBlockedOn {
-  pub fn try_from(advance_result: AdvanceBlockedOn, action_store: &ActionObjectStore) -> Result<WebAdvanceBlockedOn, Error> {
+  pub fn try_from(advance_result: AdvanceBlockedOn, action_store: &ObjectStore<Box<dyn Action + Sync + Send>, ActionId>) -> Result<WebAdvanceBlockedOn, Error> {
     let result = match advance_result {
         AdvanceBlockedOn::ActionStartWith(action_id, val) => {
-            let action_name = action_store.name_from_id(&action_id)?;
+            let action = action_store.get(&action_id).ok_or_else(|| Error::ActionId(IdError::IdMissing(action_id)))?;
+            let action_type = ActionType::from(action);
+            let action_name = action_store.name_from_id(&action_id).ok_or_else(|| Error::ActionId(IdError::IdMissing(action_id)))?;
             WebAdvanceBlockedOn {
                 blocked_on: WebAdvanceBlockedOnType::ActionStartWith,
-                action_name: Some(action_name),
+                action_name: Some(action_name.to_owned()),
+                action_type: Some(action_type),
                 start_with: Some(val),
             }
         }
@@ -60,6 +93,7 @@ impl WebAdvanceBlockedOn {
             WebAdvanceBlockedOn {
                 blocked_on: WebAdvanceBlockedOnType::ActionCannotFulfill,
                 action_name: None,
+                action_type: None,
                 start_with: None,
             }
         }
@@ -67,6 +101,7 @@ impl WebAdvanceBlockedOn {
             WebAdvanceBlockedOn {
                 blocked_on: WebAdvanceBlockedOnType::FinishedAdvancing,
                 action_name: None,
+                action_type: None,
                 start_with: None,
             }
         }
