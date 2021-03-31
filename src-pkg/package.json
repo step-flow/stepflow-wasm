@@ -1,0 +1,17 @@
+{
+  "name": "stepflow-wasm",
+  "collaborators": [
+    "John Wana <john@wana.us>"
+  ],
+  "description": "WASM build for StepFlow",
+  "version": "0.0.9",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/step-flow/stepflow-wasm"
+  },
+  "homepage": "https://stepflow.dev",
+  "sideEffects": false,
+  "module": "index.js",
+  "types": "index.d.ts"
+}

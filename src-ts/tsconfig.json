@@ -2,13 +2,16 @@
   "compilerOptions": {
     "outDir": "../pkg/",
     "sourceMap": true,
+    "inlineSources": true,
     "module": "es6",
     "target": "es6",
-    "moduleResolution": "node",
     "declaration": true,
     "declarationMap": true,
     "allowJs": true,
     "alwaysStrict": true,
     "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   }
 }

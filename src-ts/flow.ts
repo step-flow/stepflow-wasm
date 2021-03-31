@@ -6,20 +6,24 @@ export type FlowStep = {
   substeps?: [string],
 };
 
-export type StringTemplateAction = {
-  type: "stringTemplate",
+export type UriStringTemplateAction = {
+  type: "UriStringTemplate",
   template: String,
-  escape_for: "html" | "uri",
+}
+
+export type HtmlStringTemplateAction = {
+  type: "HtmlStringTemplate",
+  template: String,
 }
 
 export type SetDataAction = {
-  type: "setData",
+  type: "SetData",
   data: { [varname: string]: string },    // varname -> value
   after_attempt: number,
 }
 
 export type HtmlFormAction = {
-  type: "htmlForm"
+  type: "HtmlForm"
   string_html?: string
   email_html?: string
   bool_html?: string
@@ -27,7 +31,7 @@ export type HtmlFormAction = {
   wrap_tag?: string, // ie. wrap entire element in a <div></div>      
 }
 
-export type FlowAction = StringTemplateAction | SetDataAction | HtmlFormAction;
+export type FlowAction = UriStringTemplateAction | HtmlStringTemplateAction | SetDataAction | HtmlFormAction;
 
 export type Flow = {
   vars?: {

@@ -1,7 +1,6 @@
-// our helpers
-export * from "./flow";
-export * from './stepflow-wrapper';
-export * from './stepflow-htmlform';
+export * from "./flow.js";
+export * from './stepflow_wasm.js';
+export * from './stepflow_htmlform.js';
 
-// access to the wasm-bindgen generated interfaces
-export * as wasm from '../pkg/stepflow_wasm';
+export { loadStepflowWasm } from "./stepflow_wasm.js";
+export { Session } from "./session.js"
